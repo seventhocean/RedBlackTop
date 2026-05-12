@@ -20,14 +20,16 @@ export default function CommentItem({
   comment,
   topicId,
   onCommentCreated,
+  replies: repliesProp,
 }: {
   comment: Comment;
   topicId: number;
   onCommentCreated: () => void;
+  replies?: Comment[];
 }) {
   const [showReply, setShowReply] = useState(false);
 
-  const replies = (window as any).__commentReplies?.[comment.id] || [];
+  const replies = repliesProp || [];
 
   return (
     <div className="border-b pb-3">
@@ -64,11 +66,25 @@ export default function CommentItem({
             <div className="mt-2 ml-4">
               <CommentForm
                 topicId={topicId}
+                parentId={comment.id}
                 onCommentCreated={() => {
                   setShowReply(false);
                   onCommentCreated();
                 }}
               />
+            </div>
+          )}
+          {replies.length > 0 && (
+            <div className="ml-4 mt-2 space-y-2 border-l pl-4">
+              {replies.map((reply) => (
+                <CommentItem
+                  key={reply.id}
+                  comment={reply}
+                  topicId={topicId}
+                  onCommentCreated={onCommentCreated}
+                  replies={[]}
+                />
+              ))}
             </div>
           )}
         </div>

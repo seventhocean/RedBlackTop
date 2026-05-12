@@ -48,12 +48,12 @@ export async function POST(
   if (type === "up") {
     await db
       .update(topics)
-      .set({ upvotes: topic.upvotes + (prevVote ? 0 : 0) + 1 })
+      .set({ upvotes: topic.upvotes + 1 })
       .where(eq(topics.id, topicId));
   } else {
     await db
       .update(topics)
-      .set({ downvotes: topic.downvotes + (prevVote ? 0 : 0) + 1 })
+      .set({ downvotes: topic.downvotes + 1 })
       .where(eq(topics.id, topicId));
   }
 

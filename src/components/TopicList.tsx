@@ -39,16 +39,24 @@ export default function TopicList({ boardSlug }: { boardSlug: string }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <PostForm boardSlug={boardSlug} onPostCreated={fetchTopics} />
-        <div className="flex gap-2 text-sm">
+        <div className="flex gap-1">
           <a
             href={`/board/${boardSlug}?sort=newest`}
-            className={`px-3 py-1 rounded ${sort === "newest" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+            className={`px-4 py-2 text-sm tracking-widest uppercase transition-colors border-b-2 ${
+              sort === "newest"
+                ? "text-white border-white"
+                : "text-[#7e7e7e] border-transparent hover:text-white"
+            }`}
           >
             最新
           </a>
           <a
             href={`/board/${boardSlug}?sort=hottest`}
-            className={`px-3 py-1 rounded ${sort === "hottest" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+            className={`px-4 py-2 text-sm tracking-widest uppercase transition-colors border-b-2 ${
+              sort === "hottest"
+                ? "text-white border-white"
+                : "text-[#7e7e7e] border-transparent hover:text-white"
+            }`}
           >
             最热
           </a>
@@ -57,10 +65,10 @@ export default function TopicList({ boardSlug }: { boardSlug: string }) {
 
       {loading ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="animate-spin h-6 w-6 text-muted-foreground" />
+          <Loader2 className="animate-spin h-6 w-6 text-[#7e7e7e]" />
         </div>
       ) : topics.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-[#7e7e7e]">
           还没有话题，来发布第一个吧！
         </div>
       ) : (

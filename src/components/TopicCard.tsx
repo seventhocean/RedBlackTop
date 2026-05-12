@@ -23,10 +23,11 @@ export default function TopicCard({
   createdAt,
   board,
 }: TopicCardProps) {
-  const preview = content.length > 150 ? content.slice(0, 150) + "..." : content;
+  const preview =
+    content.length > 150 ? content.slice(0, 150) + "..." : content;
 
   return (
-    <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+    <div className="border border-[#3c3c3c] bg-[#1a1a1a] p-4 hover:border-white/30 transition-colors">
       <div className="flex items-start gap-4">
         <VoteButton
           upvotes={upvotes}
@@ -41,23 +42,27 @@ export default function TopicCard({
         />
         <div className="flex-1 min-w-0">
           <Link href={`/topic/${id}`} className="hover:underline">
-            <h3 className="font-semibold text-lg truncate">{title}</h3>
+            <h3 className="font-semibold text-lg truncate text-white">
+              {title}
+            </h3>
           </Link>
           {board && (
             <Link
               href={`/board/${board.slug}`}
-              className="text-xs text-muted-foreground hover:underline"
+              className="text-xs text-[#7e7e7e] hover:text-white transition-colors"
             >
               [{board.name}]
             </Link>
           )}
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          <p className="text-sm text-[#bbbbbb] mt-1 line-clamp-2">
             {preview}
           </p>
-          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3 mt-2 text-xs text-[#7e7e7e]">
             <span>{authorNickname}</span>
             <span>·</span>
-            <span>{createdAt ? formatDistanceToNow(new Date(createdAt)) : ""}</span>
+            <span>
+              {createdAt ? formatDistanceToNow(new Date(createdAt)) : ""}
+            </span>
           </div>
         </div>
       </div>

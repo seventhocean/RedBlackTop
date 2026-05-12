@@ -35,6 +35,7 @@ export default function CommentForm({
         body: JSON.stringify({
           content: content.trim(),
           authorNickname: nickname.trim(),
+          ...(parentId !== undefined ? { parentId } : {}),
         }),
       });
       if (!res.ok) {
@@ -67,9 +68,15 @@ export default function CommentForm({
         onChange={(e) => setContent(e.target.value)}
         rows={parentId ? 2 : 3}
       />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-[#e22718]">{error}</p>}
       <Button type="submit" disabled={submitting} size="sm">
-        {submitting ? (parentId ? "回复中..." : "评论中...") : parentId ? "回复" : "发表评论"}
+        {submitting
+          ? parentId
+            ? "回复中..."
+            : "评论中..."
+          : parentId
+            ? "回复"
+            : "发表评论"}
       </Button>
     </form>
   );

@@ -2,7 +2,7 @@ import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { boards, topics } from "@/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -56,12 +56,19 @@ export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("session_id")?.value || `anon_${Date.now()}`;
 
-  // Rate limit: max 5 topics per session
-  const recentCount = await db.query.topics.findMany({
-    where: (t) => eq(t.authorNickname, authorNickname.trim()),
-  });
-  if (recentCount.length >= 100) {
-    return NextResponse.json({ error: "Rate limited" }, { status: 429 });
+  // Rate limit: max 5 topics per nickname per hour
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  const allTopics = await db.query.topics.findMany();
+  const recentTopics = allTopics.filter(
+    (t) =>
+      t.authorNickname === authorNickname.trim() &&
+      new Date(t.createdAt).getTime() > oneHourAgo
+  );
+  if (recentTopics.length >= 5) {
+    return NextResponse.json(
+      { error: "Rate limited. Max 5 topics per hour." },
+      { status: 429 }
+    );
   }
 
   const board = await db.query.boards.findFirst({

@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { boards } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import TopicList from "@/components/TopicList";
 
 export default async function BoardPage({
@@ -20,12 +21,15 @@ export default async function BoardPage({
 
   return (
     <div>
-      <div className="mb-6">
-        <a href="/" className="text-sm text-muted-foreground hover:underline">
-          ← 返回首页
-        </a>
-        <h1 className="text-2xl font-bold mt-2">{board.name}</h1>
-        <p className="text-muted-foreground">{board.description}</p>
+      <Link
+        href="/"
+        className="text-sm text-[#7e7e7e] hover:text-white transition-colors"
+      >
+        ← 返回首页
+      </Link>
+      <div className="mt-6 mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">{board.name}</h1>
+        <p className="text-[#bbbbbb]">{board.description}</p>
       </div>
       <TopicList boardSlug={board.slug} />
     </div>

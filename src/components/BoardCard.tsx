@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
 export default function BoardCard({
@@ -10,23 +9,19 @@ export default function BoardCard({
   name: string;
   description: string;
 }) {
-  const isRed = slug.includes("red");
-  const icon = isRed ? "👍" : "👎";
-
   return (
-    <Link href={`/board/${slug}`} className="block h-full">
-      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <span>{icon}</span>
-            {name}
-          </CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">点击查看话题 →</p>
-        </CardContent>
-      </Card>
+    <Link
+      href={`/board/${slug}`}
+      className="block bg-[#1a1a1a] border border-[#3c3c3c] p-6 hover:border-white/30 transition-colors group"
+    >
+      <div
+        className="h-0.5 w-12 mb-4"
+        style={{
+          background: slug.includes("red") ? "#e22718" : "#7e7e7e",
+        }}
+      />
+      <h2 className="text-xl font-bold text-white mb-2">{name}</h2>
+      <p className="text-[#bbbbbb] text-sm">{description}</p>
     </Link>
   );
 }

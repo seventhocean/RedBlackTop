@@ -28,7 +28,6 @@ export default function PostForm({
     }
     setSubmitting(true);
     try {
-      // Ensure session cookie exists
       await fetch("/api/session", { method: "POST" });
       const res = await fetch("/api/topics", {
         method: "POST",
@@ -86,7 +85,7 @@ export default function PostForm({
         onChange={(e) => setContent(e.target.value)}
         rows={4}
       />
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-[#e22718]">{error}</p>}
       <div className="flex gap-2">
         <Button type="submit" disabled={submitting}>
           {submitting ? "发布中..." : "发布"}

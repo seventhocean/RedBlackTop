@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import VoteButton from "@/components/VoteButton";
 import CommentItem from "@/components/CommentItem";
 import CommentForm from "@/components/CommentForm";
@@ -52,21 +53,35 @@ export default function TopicPage() {
     fetchTopic();
   }, [id]);
 
+  const repliesByParentId = comments.reduce<Record<number, Comment[]>>(
+    (acc, c) => {
+      if (c.parentId !== null) {
+        if (!acc[c.parentId]) acc[c.parentId] = [];
+        acc[c.parentId].push(c);
+      }
+      return acc;
+    },
+    {}
+  );
+
   const rootComments = comments.filter((c) => c.parentId === null);
 
   return (
     <div>
-      <a href="/" className="text-sm text-muted-foreground hover:underline">
+      <Link
+        href="/"
+        className="text-sm text-[#7e7e7e] hover:text-white transition-colors"
+      >
         ← 返回首页
-      </a>
+      </Link>
 
       {loading ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="animate-spin h-6 w-6 text-muted-foreground" />
+          <Loader2 className="animate-spin h-6 w-6 text-[#7e7e7e]" />
         </div>
       ) : topic ? (
         <>
-          <article className="my-6">
+          <article className="my-6 border border-[#3c3c3c] bg-[#1a1a1a] p-6">
             <div className="flex items-start gap-4">
               <VoteButton
                 upvotes={topic.upvotes}
@@ -80,14 +95,16 @@ export default function TopicPage() {
                 }
               />
               <div className="flex-1">
-                <h1 className="text-2xl font-bold">{topic.title}</h1>
-                <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
-                  <a
+                <h1 className="text-2xl font-bold text-white">
+                  {topic.title}
+                </h1>
+                <div className="flex items-center gap-3 mt-2 text-sm text-[#bbbbbb]">
+                  <Link
                     href={`/board/${topic.board.slug}`}
-                    className="hover:underline"
+                    className="text-[#7e7e7e] hover:text-white transition-colors"
                   >
                     [{topic.board.name}]
-                  </a>
+                  </Link>
                   <span>{topic.authorNickname}</span>
                   <span>·</span>
                   <span>
@@ -96,7 +113,7 @@ export default function TopicPage() {
                       : ""}
                   </span>
                 </div>
-                <div className="mt-4 text-base whitespace-pre-wrap">
+                <div className="mt-4 text-base whitespace-pre-wrap text-[#bbbbbb]">
                   {topic.content}
                 </div>
               </div>
@@ -104,7 +121,7 @@ export default function TopicPage() {
           </article>
 
           <section className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">
+            <h2 className="text-lg font-semibold text-white mb-4">
               评论 ({comments.length})
             </h2>
             <CommentForm topicId={topic.id} onCommentCreated={fetchTopic} />
@@ -115,13 +132,14 @@ export default function TopicPage() {
                   comment={c}
                   topicId={topic.id}
                   onCommentCreated={fetchTopic}
+                  replies={repliesByParentId[c.id] || []}
                 />
               ))}
             </div>
           </section>
         </>
       ) : (
-        <p className="text-center py-8 text-muted-foreground">话题不存在</p>
+        <p className="text-center py-8 text-[#7e7e7e]">话题不存在</p>
       )}
     </div>
   );

@@ -57,7 +57,7 @@ export async function POST(
   const { id } = await params;
   const topicId = parseInt(id);
   const body = await request.json();
-  const { content, authorNickname } = body;
+  const { content, authorNickname, parentId } = body;
 
   if (!content?.trim() || !authorNickname?.trim()) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -70,13 +70,18 @@ export async function POST(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const values: Record<string, unknown> = {
+    topicId,
+    content: content.trim(),
+    authorNickname: authorNickname.trim(),
+  };
+  if (parentId != null) {
+    values.parentId = parentId;
+  }
+
   const result = await db
     .insert(comments)
-    .values({
-      topicId,
-      content: content.trim(),
-      authorNickname: authorNickname.trim(),
-    })
+    .values(values as any)
     .returning();
 
   return NextResponse.json({ comment: result[0] }, { status: 201 });
