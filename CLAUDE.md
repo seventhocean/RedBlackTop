@@ -79,20 +79,24 @@ npm run db:seed       # 初始化 4 个榜单种子数据
 - Drizzle Kit 配置在 `drizzle.config.ts`，直接指向 `./data/redblacktop.db`
 - 表：`boards`（4 条种子数据）→ `topics`（board_id FK）→ `comments`（topic_id + parent_id FK，支持嵌套回复）
 - 排序方式：`newest` = `ORDER BY created_at DESC`，`hottest` = `ORDER BY upvotes DESC`
-- 准入门限：同 nickname 最多发 100 个 topic（简单限制，非时间窗口）
+- 频率限制：同一昵称每小时最多发 5 个 topic（`/api/topics` POST 中按 `authorNickname` + 1 小时窗口检查）
 
 ### 评论回复
 
-- Schema 支持嵌套（`comments.parentId` 自引用），但 CommentForm 的 reply 功能未向 API 传 `parentId`——嵌套回复是前端占位，实际评论都是 root 级别
-- CommentItem 通过 `(window as any).__commentReplies` 读取子回复，但该全局变量未被任何代码赋值
+- Schema 支持嵌套（`comments.parentId` 自引用），CommentForm 接受 `parentId` prop 并正确传给 API，`/api/topics/[id]` POST 也支持 `parentId`
+- 话题页按 `parentId` 将评论分组为 root 和 replies，CommentItem 递归渲染子回复
+
+### 已知问题
+
+- `BoardCard` 组件未被任何页面使用（首页直接内联渲染了卡片）
 
 ### Docker
 
 - `next.config.ts` 设置了 `output: "standalone"`
-- 构建流程在 Dockerfile builder 阶段运行 `db:migrate` + `db:seed`，数据库嵌入镜像
+- 构建流程在 Dockerfile builder 阶段运行 `db:generate` + `db:migrate` + `db:seed`，数据库嵌入镜像
+- 数据库路径在 `src/db/index.ts` 中硬编码为 `data/redblacktop.db`，可通过 `DB_PATH` 环境变量配置根目录
 
 ## 注意事项
 
 - 项目无测试框架配置，如需添加测试需引入 vitest 或 jest
 - `DESIGN.md` 是 BMW M 设计系统文档，不是本项目的设计规范
-- shadcn/ui 组件在 `src/components/ui/`，通过 `npx shadcn add` 添加新组件

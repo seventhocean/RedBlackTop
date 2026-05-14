@@ -28,29 +28,23 @@ export async function POST(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  const updated: Record<string, number> = {};
   if (prevVote === "up") {
-    await db
-      .update(comments)
-      .set({ upvotes: Math.max(0, comment.upvotes - 1) })
-      .where(eq(comments.id, commentId));
+    updated.upvotes = Math.max(0, comment.upvotes - 1);
   } else if (prevVote === "down") {
-    await db
-      .update(comments)
-      .set({ downvotes: Math.max(0, comment.downvotes - 1) })
-      .where(eq(comments.id, commentId));
+    updated.downvotes = Math.max(0, comment.downvotes - 1);
   }
 
   if (type === "up") {
-    await db
-      .update(comments)
-      .set({ upvotes: comment.upvotes + 1 })
-      .where(eq(comments.id, commentId));
+    updated.upvotes = (updated.upvotes ?? comment.upvotes) + 1;
   } else {
-    await db
-      .update(comments)
-      .set({ downvotes: comment.downvotes + 1 })
-      .where(eq(comments.id, commentId));
+    updated.downvotes = (updated.downvotes ?? comment.downvotes) + 1;
   }
+
+  await db
+    .update(comments)
+    .set(updated)
+    .where(eq(comments.id, commentId));
 
   const response = NextResponse.json({ success: true });
   response.cookies.set(voteKey, type, { maxAge: 30 * 24 * 60 * 60 });
